@@ -1,6 +1,7 @@
 version: '3.7'
 services:
   mysql-master:
+    container_name: mysql-master
     image: mysql:5.7.28
     ports:
       - "3306:3306"
@@ -12,7 +13,8 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
       TZ: "Asia/Tokyo"
-  mysql-slave:
+  mysql-slave1:
+    container_name: mysql-slave1
     image: mysql:5.7.28
     ports:
       - '13306:3306' #portはmasterと変えておく
