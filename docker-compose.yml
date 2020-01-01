@@ -3,6 +3,7 @@ services:
   mysql-master:
     container_name: mysql-master
     image: mysql:5.7.28
+    command: --default-authentication-plugin=mysql_native_password
     ports:
       - "3306:3306"
     volumes:
@@ -11,11 +12,12 @@ services:
         target: /var/lib/mysql #masterはvolumeをmount(永続化させる)
       - ./master/conf/master.cnf:/etc/mysql/conf.d/my.cnf #master用のmy.cnfをコピー
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_PASSWORD: password
       TZ: "Asia/Tokyo"
   mysql-slave1:
     container_name: mysql-slave1
     image: mysql:5.7.28
+    command: --default-authentication-plugin=mysql_native_password
     ports:
       - '3307:3306' #portはmasterと変えておく
     depends_on:
@@ -25,11 +27,12 @@ services:
       - ./slave/conf/slave.cnf:/etc/mysql/conf.d/my.cnf #slave用のmy.cnfをコピー
       - ./slave/init_script/slave-start.sh:/docker-entrypoint-initdb.d/slave-start.sh #初期化スクリプトをコピー
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_PASSWORD: password
       TZ: "Asia/Tokyo"
   mysql-slave2:
     container_name: mysql-slave2
     image: mysql:5.7.28
+    command: --default-authentication-plugin=mysql_native_password
     ports:
       - '3308:3306' #portはmasterと変えておく
     depends_on:
@@ -39,7 +42,7 @@ services:
       - ./slave/conf/slave.cnf:/etc/mysql/conf.d/my.cnf #slave用のmy.cnfをコピー
       - ./slave/init_script/slave-start.sh:/docker-entrypoint-initdb.d/slave-start.sh #初期化スクリプトをコピー
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_PASSWORD: password
       TZ: "Asia/Tokyo"
 volumes:
   mysql-data:
