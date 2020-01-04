@@ -7,9 +7,12 @@ services:
     networks:
       cluster:
     volumes:
-      - ./conf/my.cnf:/etc/my.cnf
-      - ./conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+      - ./conf/ndb_mgmd/my.cnf:/etc/my.cnf
+      - ./conf/ndb_mgmd/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+      - ./ping.sh:/root/ping.sh
     command: ndb_mgmd
+    entrypoint: 
+      - /root/ping.sh
 
   ndb1:
     container_name: ndb1
@@ -17,9 +20,11 @@ services:
     networks:
       cluster:
     volumes:
-      - ./conf/my.cnf:/etc/my.cnf
-      - ./conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+      - ./conf/ndbd/my.cnf:/etc/my.cnf
+      - ./conf/ndbd/mysql-cluster.cnf:/etc/mysql-cluster.cnf
     command: ndbd
+    depends_on:
+      - management1
 
   ndb2:
     container_name: ndb2
@@ -27,9 +32,11 @@ services:
     networks:
       cluster:
     volumes:
-      - ./conf/my.cnf:/etc/my.cnf
-      - ./conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+      - ./conf/ndbd/my.cnf:/etc/my.cnf
+      - ./conf/ndbd/mysql-cluster.cnf:/etc/mysql-cluster.cnf
     command: ndbd
+    depends_on:
+      - management1
 
   mysql1:
     container_name: mysql1
@@ -39,8 +46,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./conf/my.cnf:/etc/my.cnf
-      - ./conf/mysql-cluster.cnf:/etc/mysql-cluster.cnf
+      - ./conf/mysqld/my.cnf:/etc/my.cnf
+      - ./conf/mysqld/mysql-cluster.cnf:/etc/mysql-cluster.cnf
     command: mysqld
     ports:
       - 33306:3306
